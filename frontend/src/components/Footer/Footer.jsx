@@ -1,5 +1,5 @@
-import logoSM from "../../assets/images/logo/logo-icon-2.png";
-import { Link } from 'react-router';
+import { Link } from "react-router";
+import { images } from "../../constants/AssetsContainer";
 
 const Footer = () => {
   return (
@@ -9,10 +9,7 @@ const Footer = () => {
         <section className="footer-logo-main-wrapper">
           <section className="footer-logo-wrapper">
             <Link to="/">
-              <img
-                src={logoSM}
-                alt="footer-logo"
-              />
+              <img src={images.enatLogoSm} alt="footer-logo" />
             </Link>
           </section>
           <section className="slogan-content">
@@ -84,12 +81,9 @@ const Footer = () => {
                 aria-expanded="false"
                 aria-controls="flush-collapseOne"
               >
-                <section className="footer-logo-wrapper">
+                <section className="footer-logo-wrapper mb-3">
                   <a href="#">
-                    <img
-                      src={logoSM}
-                      alt="footer-logo"
-                    />
+                    <img src={images.enatLogoSm} alt="footer-logo" />
                   </a>
                 </section>
               </button>
@@ -99,7 +93,7 @@ const Footer = () => {
               className="accordion-collapse collapse"
               data-bs-parent="#accordionFlushId"
             >
-              <div className="accordion-body">
+              <div className="accordion-body ">
                 <section className="slogan-content">
                   <h4>Where Care Meets Compassion—Like a Mother's Embrace.</h4>
                 </section>
@@ -272,6 +266,6 @@ const Footer = () => {
     </footer>
     // ======= footer section end =======
   );
-}
+};
 
-export default Footer
+export default Footer;
