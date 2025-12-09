@@ -12,6 +12,8 @@ import roleRouter from "./roleRoutes/role.routes.js";
 import blogRoutes from "./blogRoutes/blog.routes.js";
 // Import the blog detail routes route
 import blogDetailRoutes from "./blogRoutes/blogDetail.routes.js";
+//import department routes
+import departmentRoutes from "./departmentRoutes/department.routes.js";
 
 // Import the router module
 const router = Router();
@@ -23,6 +25,9 @@ router.use(authRoutes);
 
 // Add the user route to the main router
 router.use(userRouter);
+
+//add department routes
+router.use(departmentRoutes);
 
 // Add the role route to the main router
 router.use(roleRouter);
