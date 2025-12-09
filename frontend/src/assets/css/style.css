@@ -330,16 +330,16 @@ h6 {
 }
 .services-section .service-container {
   max-width: 1400px;
-  display: flex;
-  justify-content: space-between;
-  margin: 0 7%;
-  flex-wrap: wrap;
-  gap: 1rem;
+  margin: 0 auto;
+  padding: 40px 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 32px;
 }
 .services-section .service-item {
   position: relative;
   text-align: center;
-  padding: 20px 24px 24px;
+  padding: 24px 24px 28px;
   transition: var(--transition);
   flex-basis: 100%;
   background: #fff;
@@ -352,7 +352,7 @@ h6 {
   background-clip: text;
   text-fill-color: transparent;
   margin: 0 auto;
-  width: 80px;
+  width: 95px;
   height: 80px;
   border-radius: 50%;
   display: flex;

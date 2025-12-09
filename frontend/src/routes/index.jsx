@@ -18,6 +18,7 @@ import PreLoader from "../shared/components/PreLoader/PreLoader";
 import ProtectedRoute from "../constants/ProtectedRoute/ProtectedRoute";
 import { adminAndAbove, nurseAndAbove } from "../constants/appRoles/appRoles";
 import Onboarding from "../features/auth/pages/Onboarding/Onboarding";
+import Department from "../components/Departments/department";
 const AppRoutes = () => {
   // destructure user data from global state
   const { isAuth, isLoading, userId } = useSelector((state) => state?.auth);
@@ -78,7 +79,7 @@ const AppRoutes = () => {
           <Route path="/about" element={<h1>About Page</h1>} />
           <Route path="/contact" element={<h1>Contact Page</h1>} />
           <Route path="/services" element={<h1>Services Page</h1>} />
-          <Route path="/departments" element={<h1>Departments Page</h1>} />
+          <Route path="/departments" element={<Department />} />
           <Route path="/doctors" element={<h1>Doctors Page</h1>} />
           <Route path="/appointment" element={<h1>Appointment Page</h1>} />
           <Route path="/blogs" element={<BlogsPage />} />

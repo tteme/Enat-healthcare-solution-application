@@ -2547,10 +2547,10 @@
 
 **1.Department API Design **
     1.1 GET /api/departments – Get all departments
-    1.2 GET /api/departments/{department-id} – Get a specific department
+    1.2 GET /api/departments/{department_id} – Get a specific department
     1.3 POST /api/departments – Create a new department
-    1.4 PATCH /api/departments/{department-id} – Update a department
-    1.5 DELETE /api/departments/{department-id} – Soft delete a department
+    1.4 PATCH /api/departments/{department_id} – Update a department
+    1.5 DELETE /api/departments/{department_id} – Soft delete a department
 **1. Department API DOCS **
   1.1 Get All Departments
     Endpoint: GET /api/departments
@@ -2605,7 +2605,7 @@
       "message": "Something went wrong! Please try again later."
     }
   1.2 Get Specific Department by ID
-    Endpoint: GET /api/departments/{department-id}
+    Endpoint: GET /api/departments/{department_id}
 
     Description: Retrieves details of a department by its ID.
     Host/Base_URL: enathealthcare.com or localhost:2411
@@ -2725,7 +2725,7 @@
       "message": "Something went wrong! Please try again later."
     }
   1.4 Update a Department
-    Endpoint: PATCH /api/departments/{department-id}
+    Endpoint: PATCH /api/departments/{department_id}
 
     Description: Partially updates an existing department.
 
@@ -2735,7 +2735,7 @@
     Authorization:
 
     Requires valid access token (admin)
-    URL Path Parameter: department-id (integer, required)
+    URL Path Parameter: department_id (integer, required)
 
     Request Body (fields optional):
     {
@@ -2796,7 +2796,7 @@
       "message": "Something went wrong! Please try again later."
     }
   1.5 Soft Delete a Department
-    Endpoint: DELETE /api/departments/{department-id}
+    Endpoint: DELETE /api/departments/{department_id}
 
     Description: Soft deletes a department (sets deleted_at = NOW()).
     Host/Base_URL: enathealthcare.com or localhost:2411
