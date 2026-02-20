@@ -1,0 +1,53 @@
+{
+  "user": [
+    {
+      "email": "abush@gmail.com",
+      "first_name": "Abush",
+      "last_name": "Bereket",
+      "phone_number": "+251912345678",
+      "password": "abe@12345"
+    },
+    {
+      "email": "abeba@gmail.com",
+      "first_name": "Dr. Abeba",
+      "last_name": "Tadesse",
+      "phone_number": "+251911111111",
+      "password": "abe@12345"
+    },
+    {
+      "email": "eteal@gmail.com",
+      "first_name": "Dr. Eteal",
+      "last_name": "Admas",
+      "phone_number": "+251911111112",
+      "password": "ete@12345"
+    },
+    {
+      "email": "alemseged@gmail.com",
+      "first_name": "Dr. alemseged",
+      "last_name": "Zewudu",
+      "phone_number": "+251911111113",
+      "password": "ale@12345"
+    },
+    {
+      "email": "fegegitaw@gmail.com",
+      "first_name": "Dr. Fegegitaw",
+      "last_name": "Mamru",
+      "phone_number": "+251911111114",
+      "password": "feg@12345"
+    },
+    {
+      "email": "eleni@gmail.com",
+      "first_name": "Dr. Eleni",
+      "last_name": "Wolde",
+      "phone_number": "+251911111115",
+      "password": "ele@12345"
+    },
+    {
+      "email": "tihut@gmail.com",
+      "first_name": "Dr. Tihut",
+      "last_name": "Sewmehon",
+      "phone_number": "+251911111116",
+      "password": "tih@12345"
+    }
+  ]
+}

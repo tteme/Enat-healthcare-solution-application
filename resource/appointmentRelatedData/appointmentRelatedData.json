@@ -1,0 +1,210 @@
+{
+  "doctor_available_times": [
+    {
+      "id": 1,
+      "doctor_id": 101,
+      "day_of_week": 1,
+      "start_time": "08:00:00",
+      "end_time": "17:00:00",
+      "slot_duration_min": 30,
+      "buffer_before_min": 5,
+      "buffer_after_min": 5,
+      "timezone": "UTC",
+      "effective_from": "2026-01-01"
+    },
+    {
+      "id": 2,
+      "doctor_id": 102,
+      "day_of_week": 2,
+      "start_time": "13:00:00",
+      "end_time": "17:00:00",
+      "slot_duration_min": 60,
+      "buffer_before_min": 10,
+      "buffer_after_min": 10,
+      "timezone": "UTC",
+      "effective_from": "2026-01-01"
+    },
+    {
+      "id": 3,
+      "doctor_id": 103,
+      "day_of_week": 3,
+      "start_time": "08:00:00",
+      "end_time": "11:00:00",
+      "slot_duration_min": 15,
+      "buffer_before_min": 0,
+      "buffer_after_min": 5,
+      "timezone": "UTC",
+      "effective_from": "2026-01-01"
+    },
+    {
+      "id": 4,
+      "doctor_id": 104,
+      "day_of_week": 4,
+      "start_time": "10:00:00",
+      "end_time": "15:00:00",
+      "slot_duration_min": 45,
+      "buffer_before_min": 5,
+      "buffer_after_min": 5,
+      "timezone": "UTC",
+      "effective_from": "2026-01-01"
+    },
+    {
+      "id": 5,
+      "doctor_id": 105,
+      "day_of_week": 5,
+      "start_time": "17:00:00",
+      "end_time": "21:00:00",
+      "slot_duration_min": 20,
+      "buffer_before_min": 0,
+      "buffer_after_min": 0,
+      "timezone": "UTC",
+      "effective_from": "2026-01-01"
+    },
+    {
+      "id": 6,
+      "doctor_id": 106,
+      "day_of_week": 6,
+      "start_time": "09:00:00",
+      "end_time": "13:00:00",
+      "slot_duration_min": 60,
+      "buffer_before_min": 15,
+      "buffer_after_min": 15,
+      "timezone": "UTC",
+      "effective_from": "2026-01-01"
+    }
+  ],
+  "doctor_timeslots": [
+    {
+      "id": 1001,
+      "doctor_id": 101,
+      "start_datetime": "2026-02-09 09:00:00",
+      "end_datetime": "2026-02-09 09:30:00",
+      "status": "BOOKED",
+      "hold_expires_at": null
+    },
+    {
+      "id": 1002,
+      "doctor_id": 101,
+      "start_datetime": "2026-02-09 09:30:00",
+      "end_datetime": "2026-02-09 10:00:00",
+      "status": "OPEN",
+      "hold_expires_at": null
+    },
+    {
+      "id": 2001,
+      "doctor_id": 102,
+      "start_datetime": "2026-02-10 13:00:00",
+      "end_datetime": "2026-02-10 14:00:00",
+      "status": "HELD",
+      "hold_expires_at": "2026-02-03 01:10:00"
+    },
+    {
+      "id": 3001,
+      "doctor_id": 103,
+      "start_datetime": "2026-02-11 08:00:00",
+      "end_datetime": "2026-02-11 08:15:00",
+      "status": "BOOKED",
+      "hold_expires_at": null
+    },
+    {
+      "id": 4001,
+      "doctor_id": 104,
+      "start_datetime": "2026-02-12 10:00:00",
+      "end_datetime": "2026-02-12 10:45:00",
+      "status": "CANCELLED",
+      "hold_expires_at": null
+    },
+    {
+      "id": 5001,
+      "doctor_id": 105,
+      "start_datetime": "2026-02-13 17:00:00",
+      "end_datetime": "2026-02-13 17:20:00",
+      "status": "OPEN",
+      "hold_expires_at": null
+    },
+    {
+      "id": 6001,
+      "doctor_id": 106,
+      "start_datetime": "2026-02-14 09:00:00",
+      "end_datetime": "2026-02-14 10:00:00",
+      "status": "OPEN",
+      "hold_expires_at": null
+    }
+  ],
+  "patient_appointment_requests": [
+    {
+      "id": 50001,
+      "full_name": "Abebech Tadesse",
+      "email": "abebech.t@gmail.com",
+      "case_description": "Post-operative neurological follow-up to assess motor function recovery and evaluate recent migraine frequency."
+    },
+    {
+      "id": 50002,
+      "full_name": "Yohannes Tekle",
+      "email": "yohannes.tek@gmail.com",
+      "case_description": "Acute L4-L5 lumbar strain with radiating pain; requires physical therapy assessment and pain management plan."
+    },
+    {
+      "id": 50003,
+      "full_name": "Mulugeta Bekele",
+      "email": "mulugeta.b@gmail.com",
+      "case_description": "Comprehensive Type 2 diabetes management, focusing on glycemic index education and long-term dietary adjustment."
+    },
+    {
+      "id": 50004,
+      "full_name": "Tewodros Kassahun",
+      "email": "tewodros.k@gmail.com",
+      "case_description": "Chronic hypertension management and cardiovascular risk assessment; patient reporting occasional palpitations."
+    },
+    {
+      "id": 50005,
+      "full_name": "Selamawit Girma",
+      "email": "selam.girma@gmail.com",
+      "case_description": "Initial prenatal consultation (8 weeks); history of anemia. Requires blood panel and routine physical examination."
+    },
+    {
+      "id": 50006,
+      "full_name": "Dawit Mesfin",
+      "email": "dawit.mes@gmail.com",
+      "case_description": "Dermatological evaluation for persistent eczematous lesions on lower limbs; non-responsive to over-the-counter topical steroids."
+    },
+    {
+      "id": 50007,
+      "full_name": "Genet Ayalew",
+      "email": "genet.ayalew@gmail.com",
+      "case_description": "Ophthalmology referral for sudden onset of vitreous floaters and blurred vision in the right eye; rule out retinal tear."
+    },
+    {
+      "id": 50008,
+      "full_name": "Henok Fasil",
+      "email": "henok.f@gmail.com",
+      "case_description": "Pediatric consultation for recurrent seasonal asthma; needs update on inhaler technique and school action plan."
+    },
+    {
+      "id": 50009,
+      "full_name": "Zenebech Worku",
+      "email": "zene.worku@gmail.com",
+      "case_description": "Orthopedic follow-up for bilateral knee osteoarthritis; evaluating candidacy for hyaluronic acid injections or partial replacement."
+    }
+  ],
+  "assign_appointments": [
+    {
+      "id": 1,
+      "appointment_id": 1,
+      "timeslot_id": 1,
+      "note": "Ensure patient brings previous CT scan results for the neurological review."
+    },
+    {
+      "id": 2,
+      "appointment_id": 2,
+      "timeslot_id": 2,
+      "note": "Patient requires a translator for specific medical terminology during the orthopedic exam."
+    },
+    {
+      "id": 3,
+      "appointment_id": 3,
+      "timeslot_id": 3,
+      "note": "Fast for 8 hours prior to this appointment for blood glucose testing."
+    }
+  ]
+}

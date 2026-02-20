@@ -1,0 +1,59 @@
+[
+  {
+    "blog_id": 1,
+    "detail_description": "Quality sleep is crucial for maintaining productivity and focus at work. Lack of sleep can lead to decreased cognitive function, poor decision-making, and even health issues. Understanding the importance of sleep hygiene—such as maintaining a regular sleep schedule and creating a restful environment—can lead to better health outcomes. By prioritizing sleep, individuals can improve their overall well-being and enhance their performance in daily tasks.\n\nIncorporating relaxation techniques before bedtime, such as reading, meditation, or gentle stretching, can significantly improve sleep quality. Moreover, creating a sleep-friendly environment, with minimal noise and optimal temperature, will help you wake up refreshed and ready to tackle the day ahead.",
+    "blog_main_highlight": "Prioritizing sleep enhances performance and contributes to overall well-being.",
+    "blog_post_wrap_up": "Incorporating relaxation techniques before bedtime can improve sleep quality and help you wake up refreshed.",
+    "tags": [{ "tag_id": 1 }, { "tag_id": 3 }, { "tag_id": 5 }, { "tag_id": 6 }, { "tag_id": 7 }],
+    "images": [
+      {
+        "image_gallery_id": 4
+      },
+      {
+        "image_gallery_id": 5
+      },
+      {
+        "image_gallery_id": 6
+      }
+    ],
+    "related_blog_post": [{ "blog_id": 2 }, { "blog_id": 3 }]
+  },
+  {
+    "blog_id": 2,
+    "detail_description": "Staying hydrated is vital for maintaining energy levels and concentration. Dehydration can lead to fatigue, headaches, and decreased cognitive function. Drinking enough water throughout the day can improve your overall health and work performance. Incorporating hydrating foods, such as fruits and vegetables, not only contributes to fluid intake but also provides essential nutrients that support your body’s functions.\n\nTo ensure you’re staying hydrated, it's important to keep a water bottle at your desk and set reminders to drink regularly. By making hydration a priority, you can enhance your focus and energy levels, ultimately leading to a more productive workday.",
+    "blog_main_highlight": "Hydration is key for maintaining energy and focus.",
+    "blog_post_wrap_up": "Keep a water bottle at your desk and incorporate hydrating foods into your diet.",
+    "tags": [{ "tag_id": 1 }, { "tag_id": 3 }, { "tag_id": 4 }, { "tag_id": 5 }, { "tag_id": 6 }],
+    "images": [
+      {
+        "image_gallery_id": 7
+      },
+      {
+        "image_gallery_id": 8
+      },
+      {
+        "image_gallery_id": 9
+      }
+    ],
+    "related_blog_post": [{ "blog_id": 1 }, { "blog_id": 3 }]
+  },
+  {
+    "blog_id": 3,
+    "detail_description": "Mental health is just as important as physical health, and raising awareness can help reduce stigma and encourage individuals to seek help. Understanding the signs of mental health issues, such as anxiety and depression, is essential for early intervention and support. Promoting mental health awareness can create safe spaces for discussions, helping individuals feel more comfortable sharing their experiences.\n\nEncouraging open conversations about mental health not only benefits those who are struggling but also fosters a supportive community. Providing access to mental health services and resources can significantly improve the well-being of individuals and families, ultimately leading to a healthier society.",
+    "blog_main_highlight": "Promoting mental health awareness can create safe spaces for discussions.",
+    "blog_post_wrap_up": "Encouraging open conversations and providing access to mental health services can significantly improve well-being.",
+    "tags": [{ "tag_id": 2 }, { "tag_id": 4 }, { "tag_id": 7 },{ "tag_id": 8 }],
+    "images": [
+      {
+        "image_gallery_id": 10
+      },
+      {
+        "image_gallery_id": 11
+      },
+      {
+        "image_gallery_id": 12
+      }
+    ],
+    "related_blog_post": [{ "blog_id": 1 }, { "blog_id": 2 }]
+  }
+]
