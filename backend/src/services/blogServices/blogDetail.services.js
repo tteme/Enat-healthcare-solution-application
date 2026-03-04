@@ -23,18 +23,21 @@ export const getAllBlogDetailsService = async () => {
          bd.id, bd.blog_id, bd.hash,
          bd.detail_description, bd.blog_main_highlight, bd.blog_post_wrap_up,
          bd.created_at, bd.updated_at,
-         b.blog_img, b.blog_title, b.blog_description, b.user_id,
-         u.email, u.display_name
+         b.blog_title, b.blog_description, b.user_id, b.image_gallery_id,
+         ig.image_url AS blog_image_url,
+         u.email, up.first_name, up.last_name, up.user_name
        FROM blog_detail bd
        JOIN blog b ON b.blog_id = bd.blog_id
+       JOIN image_gallery ig ON b.image_gallery_id = ig.id AND ig.deleted_at IS NULL
        JOIN user u ON u.id = b.user_id
+       JOIN user_profile up ON up.user_id = u.id
        where bd.deleted_at IS NULL
-       ORDER BY bd.created_at DESC`
+       ORDER BY bd.created_at DESC`,
     );
 
     if (baseRows.length === 0) return [];
 
-    // 2) Gather IDs and build a single IN (...) placeholder string
+    /// 2) Gather IDs and build a single IN (...) placeholder string
     const ids = baseRows.map((r) => r.id);
     const placeholders = ids.map(() => "?").join(",");
 
@@ -47,16 +50,17 @@ export const getAllBlogDetailsService = async () => {
        AND bdt.deleted_at IS NULL
        AND t.deleted_at IS NULL
        ORDER BY t.name ASC`,
-      ids
+      ids,
     );
 
     const imgRows = await connection.query(
-      `SELECT blog_detail_id, blog_img_url
-       FROM blog_detail_img
-       WHERE blog_detail_id IN (${placeholders})
-        AND deleted_at IS NULL
-       ORDER BY id ASC`,
-      ids
+      `SELECT bdi.blog_detail_id, bdi.image_gallery_id, ig.image_name, ig.image_url, ig.image_type
+       FROM blog_detail_img bdi
+       LEFT JOIN image_gallery ig ON bdi.image_gallery_id = ig.id AND ig.deleted_at IS NULL
+       WHERE bdi.blog_detail_id IN (${placeholders})
+        AND bdi.deleted_at IS NULL
+       ORDER BY bdi.id ASC`,
+      ids,
     );
 
     const relRows = await connection.query(
@@ -66,10 +70,10 @@ export const getAllBlogDetailsService = async () => {
        WHERE rbp.blog_detail_id IN (${placeholders})
         AND rbp.deleted_at IS NULL
        ORDER BY rbp.id ASC`,
-      ids
+      ids,
     );
 
-    // 4) Group associations by blog_detail_id
+    /// 4) Group associations by blog_detail_id
     const tagMap = new Map();
     for (const row of tagRows) {
       const list = tagMap.get(row.blog_detail_id) || [];
@@ -80,7 +84,14 @@ export const getAllBlogDetailsService = async () => {
     const imgMap = new Map();
     for (const row of imgRows) {
       const list = imgMap.get(row.blog_detail_id) || [];
-      list.push({ blog_img_url: row.blog_img_url });
+      if (row.image_gallery_id) {
+        list.push({
+          image_gallery_id: row.image_gallery_id,
+          image_name: row.image_name,
+          image_url: row.image_url,
+          image_type: row.image_type,
+        });
+      }
       imgMap.set(row.blog_detail_id, list);
     }
 
@@ -96,9 +107,10 @@ export const getAllBlogDetailsService = async () => {
       id: row.id,
       blog: {
         blog_id: row.blog_id,
-        blog_img: row.blog_img,
         blog_title: row.blog_title,
         blog_description: row.blog_description,
+        image_gallery_id: row.image_gallery_id,
+        image_url: row.blog_image_url,
       },
       hash: row.hash,
       detail_description: row.detail_description,
@@ -107,7 +119,9 @@ export const getAllBlogDetailsService = async () => {
       user: {
         user_id: row.user_id,
         email: row.email,
-        display_name: row.display_name,
+        first_name: row.first_name,
+        last_name: row.last_name,
+        user_name: row.user_name,
       },
       tags: tagMap.get(row.id) || [],
       images: imgMap.get(row.id) || [],
@@ -138,15 +152,20 @@ export const getBlogDetailByHashService = async (hash) => {
          bd.id, bd.blog_id, bd.hash,
          bd.detail_description, bd.blog_main_highlight, bd.blog_post_wrap_up,
          bd.created_at, bd.updated_at,
-         b.blog_img, b.blog_title, b.blog_description, b.user_id,
-         u.email, u.display_name
+         b.blog_title, b.blog_description, b.user_id, b.image_gallery_id,
+         ig.image_url AS blog_image_url,
+         u.email, up.first_name, up.last_name, up.user_name, up.user_color,
+         upp.profile_picture
        FROM blog_detail bd
        JOIN blog b ON b.blog_id = bd.blog_id
+       JOIN image_gallery ig ON b.image_gallery_id = ig.id AND ig.deleted_at IS NULL
        JOIN user u ON u.id = b.user_id
+       JOIN user_profile up ON up.user_id = u.id
+       JOIN user_profile_picture AS upp ON upp.user_id = u.id
        WHERE bd.hash = ?
         AND bd.deleted_at IS NULL
        LIMIT 1`,
-      [hash]
+      [hash],
     );
 
     if (baseRows.length === 0) return null;
@@ -163,26 +182,29 @@ export const getBlogDetailByHashService = async (hash) => {
          AND bdt.deleted_at IS NULL
          AND t.deleted_at IS NULL
        ORDER BY t.name ASC`,
-      [blogDetailId]
+      [blogDetailId],
     );
 
     const imgRows = await connection.query(
-      `SELECT blog_img_url
-       FROM blog_detail_img
-       WHERE blog_detail_id = ?
-        AND deleted_at IS NULL
-       ORDER BY id ASC`,
-      [blogDetailId]
+      `SELECT bdi.image_gallery_id, ig.image_name, ig.image_url, ig.image_type
+       FROM blog_detail_img bdi
+       LEFT JOIN image_gallery ig ON bdi.image_gallery_id = ig.id AND ig.deleted_at IS NULL
+       WHERE bdi.blog_detail_id = ?
+        AND bdi.deleted_at IS NULL
+       ORDER BY bdi.id ASC`,
+      [blogDetailId],
     );
 
     const relRows = await connection.query(
-      `SELECT rbp.blog_id, b.blog_title
+      `SELECT rbp.blog_id, b.blog_title, b.image_gallery_id, ig.image_url, bd.hash
        FROM related_blog_post rbp
        JOIN blog b ON b.blog_id = rbp.blog_id
+       LEFT JOIN image_gallery ig ON b.image_gallery_id = ig.id AND ig.deleted_at IS NULL
+       LEFT JOIN blog_detail bd ON bd.blog_id = b.blog_id AND bd.deleted_at IS NULL
        WHERE rbp.blog_detail_id = ?
         AND rbp.deleted_at IS NULL
        ORDER BY rbp.id ASC`,
-      [blogDetailId]
+      [blogDetailId],
     );
 
     // 3) Compose final detail payload (no `hash` field per your docs)
@@ -190,9 +212,10 @@ export const getBlogDetailByHashService = async (hash) => {
       id: row.id,
       blog: {
         blog_id: row.blog_id,
-        blog_img: row.blog_img,
         blog_title: row.blog_title,
         blog_description: row.blog_description,
+        image_gallery_id: row.image_gallery_id,
+        image_url: row.blog_image_url,
       },
       hash: row.hash,
       detail_description: row.detail_description,
@@ -201,13 +224,31 @@ export const getBlogDetailByHashService = async (hash) => {
       user: {
         user_id: row.user_id,
         email: row.email,
-        display_name: row.display_name,
+        first_name: row.first_name,
+        last_name: row.last_name,
+        user_name: row.user_name,
+        user_color: row.user_color,
+        profile_picture: row.profile_picture,
       },
       tags: tagRows.map((tag) => ({ tag_id: tag.tag_id, name: tag.name })),
-      images: imgRows.map((img) => ({ blog_img_url: img.blog_img_url })),
+      images: imgRows
+        .map((img) =>
+          img.image_gallery_id
+            ? {
+                image_gallery_id: img.image_gallery_id,
+                image_name: img.image_name,
+                image_url: img.image_url,
+                image_type: img.image_type,
+              }
+            : null,
+        )
+        .filter(Boolean),
       related_blog_posts: relRows.map((rel) => ({
         blog_id: rel.blog_id,
+        hash: rel.hash,
         blog_title: rel.blog_title,
+        image_gallery_id: rel.image_gallery_id,
+        image_url: rel.image_url,
       })),
       created_at: row.created_at,
       updated_at: row.updated_at,
@@ -229,13 +270,14 @@ const getParentBlogWithAuthor = async (blogId) => {
   try {
     const rows = await connection.query(
       `SELECT
-             b.blog_id, b.user_id, b.blog_img, b.blog_title, b.blog_description,
-             u.email, u.display_name
+             b.blog_id, b.user_id, b.blog_title, b.blog_description,
+             u.email, up.first_name, up.last_name, up.user_name, up.user_color
            FROM blog b
            JOIN user u ON u.id = b.user_id
+           JOIN user_profile up ON up.user_id = u.id
            WHERE b.blog_id = ?
            LIMIT 1`,
-      [blogId]
+      [blogId],
     );
     return rows.length > 0 ? rows[0] : null;
   } catch (error) {
@@ -255,7 +297,7 @@ const tagExists = async (tagId) => {
   try {
     const rows = await connection.query(
       `SELECT id FROM tag WHERE id = ? LIMIT 1`,
-      [tagId]
+      [tagId],
     );
     return rows.length > 0;
   } catch (error) {
@@ -275,7 +317,7 @@ const blogExists = async (blogId) => {
   try {
     const rows = await connection.query(
       `SELECT blog_id FROM blog WHERE blog_id = ? LIMIT 1`,
-      [blogId]
+      [blogId],
     );
     return rows.length > 0;
   } catch (error) {
@@ -321,7 +363,7 @@ export const createBlogDetailService = async (blogDetailData) => {
       // 0) Optional soft pre-check for duplicate hash (unique index will also protect)
       const [dup] = await txConnection.execute(
         `SELECT id FROM blog_detail WHERE hash = ? AND deleted_at IS NULL LIMIT 1`,
-        [hash]
+        [hash],
       );
       if (dup.length > 0) {
         throw new Error("A blog detail with these details already exists.");
@@ -344,7 +386,7 @@ export const createBlogDetailService = async (blogDetailData) => {
           detail_description,
           blog_main_highlight,
           blog_post_wrap_up,
-        ]
+        ],
       );
       if (bdRes.affectedRows !== 1) {
         throw new Error("Failed to insert blog_detail.");
@@ -365,7 +407,7 @@ export const createBlogDetailService = async (blogDetailData) => {
           // IGNORE makes the operation idempotent on retries
           await txConnection.execute(
             `INSERT IGNORE INTO blog_detail_tag (blog_detail_id, tag_id) VALUES (?, ?)`,
-            [blogDetailId, tagId]
+            [blogDetailId, tagId],
           );
         }
       }
@@ -373,12 +415,11 @@ export const createBlogDetailService = async (blogDetailData) => {
       // 4) Insert images
       if (isNonEmptyArray(images)) {
         for (const img of images) {
-          const url = img?.blog_img_url?.toString();
-          if (!url) continue;
-
+          const imageGalleryId = img?.image_gallery_id;
+          if (!imageGalleryId) continue;
           await txConnection.execute(
-            `INSERT IGNORE INTO blog_detail_img (blog_detail_id, blog_img_url) VALUES (?, ?)`,
-            [blogDetailId, url]
+            `INSERT IGNORE INTO blog_detail_img (blog_detail_id, image_gallery_id) VALUES (?, ?)`,
+            [blogDetailId, imageGalleryId],
           );
         }
       }
@@ -396,7 +437,7 @@ export const createBlogDetailService = async (blogDetailData) => {
 
           await txConnection.execute(
             `INSERT IGNORE INTO related_blog_post (blog_id, blog_detail_id) VALUES (?, ?)`,
-            [relBlogId, blogDetailId]
+            [relBlogId, blogDetailId],
           );
         }
       }
@@ -405,9 +446,8 @@ export const createBlogDetailService = async (blogDetailData) => {
       const [[bd]] = await txConnection.execute(
         `SELECT id, blog_id, hash, detail_description, blog_main_highlight, blog_post_wrap_up, created_at, updated_at
          FROM blog_detail WHERE id = ?`,
-        [blogDetailId]
+        [blogDetailId],
       );
-      console.log("bd", bd);
 
       const [tagRows] = await txConnection.execute(
         `SELECT t.id AS tag_id, t.name
@@ -415,15 +455,16 @@ export const createBlogDetailService = async (blogDetailData) => {
          JOIN blog_detail_tag bdt ON bdt.tag_id = t.id
          WHERE bdt.blog_detail_id = ?
          ORDER BY t.name ASC`,
-        [blogDetailId]
+        [blogDetailId],
       );
 
       const [imgRows] = await txConnection.execute(
-        `SELECT blog_img_url
-         FROM blog_detail_img
-         WHERE blog_detail_id = ?
-         ORDER BY id ASC`,
-        [blogDetailId]
+        `SELECT bdi.image_gallery_id, ig.image_name, ig.image_url, ig.image_type
+         FROM blog_detail_img bdi
+         LEFT JOIN image_gallery ig ON bdi.image_gallery_id = ig.id AND ig.deleted_at IS NULL
+         WHERE bdi.blog_detail_id = ?
+         ORDER BY bdi.id ASC`,
+        [blogDetailId],
       );
 
       const [relRows] = await txConnection.execute(
@@ -432,7 +473,7 @@ export const createBlogDetailService = async (blogDetailData) => {
          JOIN blog b ON b.blog_id = rbp.blog_id
          WHERE rbp.blog_detail_id = ?
          ORDER BY rbp.id ASC`,
-        [blogDetailId]
+        [blogDetailId],
       );
 
       // 7) Compose response (exactly as your docs)
@@ -440,7 +481,6 @@ export const createBlogDetailService = async (blogDetailData) => {
         id: bd.id,
         blog: {
           blog_id: parentBlog.blog_id,
-          blog_img: parentBlog.blog_img,
           blog_title: parentBlog.blog_title,
           blog_description: parentBlog.blog_description,
         },
@@ -451,10 +491,23 @@ export const createBlogDetailService = async (blogDetailData) => {
         user: {
           user_id: parentBlog.user_id,
           email: parentBlog.email,
-          display_name: parentBlog.display_name,
+          first_name: parentBlog.first_name,
+          last_name: parentBlog.last_name,
+          user_name: parentBlog.user_name,
         },
         tags: tagRows.map((tag) => ({ tag_id: tag.tag_id, name: tag.name })),
-        images: imgRows.map((img) => ({ blog_img_url: img.blog_img_url })),
+        images: imgRows
+          .map((img) =>
+            img.image_gallery_id
+              ? {
+                  image_gallery_id: img.image_gallery_id,
+                  image_name: img.image_name,
+                  image_url: img.image_url,
+                  image_type: img.image_type,
+                }
+              : null,
+          )
+          .filter(Boolean),
         related_blog_post: relRows.map((relatedPost) => ({
           blog_id: relatedPost.blog_id,
           blog_title: relatedPost.blog_title,
@@ -494,7 +547,7 @@ export const createBlogDetailService = async (blogDetailData) => {
  */
 export const updateBlogDetailByHashService = async (
   hash,
-  updatedBlogDetailData
+  updatedBlogDetailData,
 ) => {
   // Support both keys just in case (your docs use `related_blog_posts`)
   const {
@@ -520,7 +573,7 @@ export const updateBlogDetailByHashService = async (
          FROM blog_detail
         WHERE hash = ? AND deleted_at IS NULL
         LIMIT 1`,
-        [hash]
+        [hash],
       );
       if (foundRows.length === 0) {
         // Let controller return 404
@@ -552,7 +605,7 @@ export const updateBlogDetailByHashService = async (
         // Validate destination blog exists
         const [blogCheck] = await txConnection.execute(
           `SELECT blog_id FROM blog WHERE blog_id = ? LIMIT 1`,
-          [blog_id]
+          [blog_id],
         );
         if (blogCheck.length === 0) {
           throw new Error("Provided parameter is invalid."); // controller -> 400
@@ -589,7 +642,7 @@ export const updateBlogDetailByHashService = async (
           const placeholders = ids.map(() => "?").join(",");
           const [existsRows] = await txConnection.execute(
             `SELECT id FROM tag WHERE id IN (${placeholders})`,
-            ids
+            ids,
           );
           if (existsRows.length !== ids.length) {
             throw new Error("Provided parameter is invalid."); // controller -> 400 (one or more tag_id do not exist)
@@ -599,13 +652,13 @@ export const updateBlogDetailByHashService = async (
         // Replace tags set
         await txConnection.execute(
           `DELETE FROM blog_detail_tag WHERE blog_detail_id = ?`,
-          [blogDetailId]
+          [blogDetailId],
         );
         if (isNonEmptyArray(tags)) {
           for (const tag of tags) {
             await txConnection.execute(
               `INSERT INTO blog_detail_tag (blog_detail_id, tag_id) VALUES (?, ?)`,
-              [blogDetailId, tag.tag_id]
+              [blogDetailId, tag.tag_id],
             );
           }
         }
@@ -619,15 +672,15 @@ export const updateBlogDetailByHashService = async (
 
         await txConnection.execute(
           `DELETE FROM blog_detail_img WHERE blog_detail_id = ?`,
-          [blogDetailId]
+          [blogDetailId],
         );
         if (isNonEmptyArray(images)) {
           for (const img of images) {
-            const url = img?.blog_img_url?.toString();
-            if (!url) continue;
+            const imageGalleryId = img?.image_gallery_id;
+            if (!imageGalleryId) continue;
             await txConnection.execute(
-              `INSERT INTO blog_detail_img (blog_detail_id, blog_img_url) VALUES (?, ?)`,
-              [blogDetailId, url]
+              `INSERT INTO blog_detail_img (blog_detail_id, image_gallery_id) VALUES (?, ?)`,
+              [blogDetailId, imageGalleryId],
             );
           }
         }
@@ -650,7 +703,7 @@ export const updateBlogDetailByHashService = async (
           const placeholders = relIds.map(() => "?").join(",");
           const [existsBlogs] = await txConnection.execute(
             `SELECT blog_id FROM blog WHERE blog_id IN (${placeholders})`,
-            relIds
+            relIds,
           );
           if (existsBlogs.length !== relIds.length) {
             throw new Error("Provided parameter is invalid."); // controller -> 400 (one or more related blog_id do not exist)
@@ -659,13 +712,13 @@ export const updateBlogDetailByHashService = async (
 
         await txConnection.execute(
           `DELETE FROM related_blog_post WHERE blog_detail_id = ?`,
-          [blogDetailId]
+          [blogDetailId],
         );
         if (isNonEmptyArray(related_blog_posts)) {
           for (const rel of related_blog_posts) {
             await txConnection.execute(
               `INSERT INTO related_blog_post (blog_id, blog_detail_id) VALUES (?, ?)`,
-              [rel.blog_id, blogDetailId]
+              [rel.blog_id, blogDetailId],
             );
           }
         }
@@ -675,14 +728,15 @@ export const updateBlogDetailByHashService = async (
       // parent blog + author
       const [[pb]] = await txConnection.execute(
         `SELECT
-         b.blog_id, b.blog_img, b.blog_title, b.blog_description,
-         u.id AS user_id, u.email, u.display_name
+         b.blog_id, b.blog_title, b.blog_description,
+         u.id AS user_id, u.email, up.first_name, up.last_name, up.user_name
        FROM blog b
        JOIN user u ON u.id = b.user_id
+       JOIN user_profile up ON up.user_id = u.id
        JOIN blog_detail bd ON bd.blog_id = b.blog_id
       WHERE bd.id = ?
       LIMIT 1`,
-        [blogDetailId]
+        [blogDetailId],
       );
 
       // base row
@@ -690,7 +744,7 @@ export const updateBlogDetailByHashService = async (
         `SELECT id, hash, detail_description, blog_main_highlight, blog_post_wrap_up, created_at, updated_at
          FROM blog_detail
         WHERE id = ?`,
-        [blogDetailId]
+        [blogDetailId],
       );
 
       // tags
@@ -700,16 +754,17 @@ export const updateBlogDetailByHashService = async (
          JOIN blog_detail_tag bdt ON bdt.tag_id = t.id
         WHERE bdt.blog_detail_id = ?
         ORDER BY t.name ASC`,
-        [blogDetailId]
+        [blogDetailId],
       );
 
       // images
       const [imgRows] = await txConnection.execute(
-        `SELECT blog_img_url
-         FROM blog_detail_img
-        WHERE blog_detail_id = ?
-        ORDER BY id ASC`,
-        [blogDetailId]
+        `SELECT bdi.image_gallery_id, ig.image_name, ig.image_url, ig.image_type
+         FROM blog_detail_img bdi
+         LEFT JOIN image_gallery ig ON bdi.image_gallery_id = ig.id AND ig.deleted_at IS NULL
+         WHERE bdi.blog_detail_id = ?
+         ORDER BY bdi.id ASC`,
+        [blogDetailId],
       );
 
       // related posts
@@ -719,7 +774,7 @@ export const updateBlogDetailByHashService = async (
          JOIN blog b ON b.blog_id = rbp.blog_id
         WHERE rbp.blog_detail_id = ?
         ORDER BY rbp.id ASC`,
-        [blogDetailId]
+        [blogDetailId],
       );
 
       // 7) Compose the API payload
@@ -727,7 +782,6 @@ export const updateBlogDetailByHashService = async (
         id: bd.id,
         blog: {
           blog_id: pb.blog_id,
-          blog_img: pb.blog_img,
           blog_title: pb.blog_title,
           blog_description: pb.blog_description,
         },
@@ -738,10 +792,23 @@ export const updateBlogDetailByHashService = async (
         user: {
           user_id: pb.user_id,
           email: pb.email,
-          display_name: pb.display_name,
+          first_name: pb.first_name,
+          last_name: pb.last_name,
+          user_name: pb.user_name,
         },
         tags: tagRows.map((tag) => ({ tag_id: tag.tag_id, name: tag.name })),
-        images: imgRows.map((img) => ({ blog_img_url: img.blog_img_url })),
+        images: imgRows
+          .map((img) =>
+            img.image_gallery_id
+              ? {
+                  image_gallery_id: img.image_gallery_id,
+                  image_name: img.image_name,
+                  image_url: img.image_url,
+                  image_type: img.image_type,
+                }
+              : null,
+          )
+          .filter(Boolean),
         related_blog_posts: relRows.map((rel) => ({
           blog_id: rel.blog_id,
           blog_title: rel.blog_title,
@@ -776,7 +843,7 @@ export const deleteBlogDetailByHashService = async (hash) => {
       // 1) Locate target that isn't already soft-deleted
       const [found] = await txConnection.execute(
         `SELECT id FROM blog_detail WHERE hash = ? AND deleted_at IS NULL LIMIT 1`,
-        [hash]
+        [hash],
       );
       if (found.length === 0) {
         // Let controller send 404 per the API docs
@@ -789,19 +856,19 @@ export const deleteBlogDetailByHashService = async (hash) => {
         `UPDATE blog_detail_tag
            SET deleted_at = NOW(), updated_at = NOW()
          WHERE blog_detail_id = ? AND deleted_at IS NULL`,
-        [blogDetailId]
+        [blogDetailId],
       );
       await txConnection.execute(
         `UPDATE blog_detail_img
            SET deleted_at = NOW(), updated_at = NOW()
          WHERE blog_detail_id = ? AND deleted_at IS NULL`,
-        [blogDetailId]
+        [blogDetailId],
       );
       await txConnection.execute(
         `UPDATE related_blog_post
            SET deleted_at = NOW(), updated_at = NOW()
          WHERE blog_detail_id = ? AND deleted_at IS NULL`,
-        [blogDetailId]
+        [blogDetailId],
       );
 
       // 3) Soft-delete parent row
@@ -809,7 +876,7 @@ export const deleteBlogDetailByHashService = async (hash) => {
         `UPDATE blog_detail
             SET deleted_at = NOW(), updated_at = NOW()
           WHERE id = ? AND deleted_at IS NULL`,
-        [blogDetailId]
+        [blogDetailId],
       );
       if (upd.affectedRows !== 1) {
         throw new Error("Failed to delete blog_detail.");
@@ -818,7 +885,7 @@ export const deleteBlogDetailByHashService = async (hash) => {
       // 4) Read back the deleted_at timestamp for response
       const [[row]] = await txConnection.execute(
         `SELECT id, deleted_at FROM blog_detail WHERE id = ? LIMIT 1`,
-        [blogDetailId]
+        [blogDetailId],
       );
 
       return { deleted: true, id: row.id, deleted_at: row.deleted_at };
