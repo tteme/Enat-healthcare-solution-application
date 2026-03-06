@@ -18,16 +18,15 @@ export const imageGalleryByUserIdService = async (userId, type) => {
   } catch (error) {
     console.error(
       `Error fetching gallery for user ${userId} with type ${type}:`,
-      error
+      error,
     );
     throw error;
   }
 };
 
-
 /**
  * @function getAllGalleryImagesService
- * @description Retrieves a list of all non-deleted gallery images. 
+ * @description Retrieves a list of all non-deleted gallery images.
  * Supports optional filtering by image type.
  * @param {string} [type] - Optional filter: 'BLOG' or 'BLOG_DETAIL'.
  * @returns {Promise<Object>} The API response containing the array of images.
@@ -45,7 +44,6 @@ export const getAllGalleryImagesService = async (type = "") => {
     throw error;
   }
 };
-
 
 /**
  * @function getImageByIdService
@@ -90,9 +88,13 @@ export const createGalleryImageService = async (formData) => {
  */
 export const updateGalleryImageService = async (imageId, formData) => {
   try {
-    const response = await protectedAxios.patch(`/gallery/${imageId}`, formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
+    const response = await protectedAxios.patch(
+      `/gallery/${imageId}`,
+      formData,
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+      },
+    );
     return response.data;
   } catch (error) {
     console.error(`Error updating gallery image [${imageId}]:`, error);

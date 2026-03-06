@@ -8,14 +8,12 @@ import {
 import { BsArrowRepeat, BsBlockquoteLeft } from "react-icons/bs";
 import { AiOutlineUsergroupAdd } from "react-icons/ai";
 import { BiCloudUpload } from "react-icons/bi";
-
+import { FaHospitalUser } from "react-icons/fa6";
 
 // Define common breadcrumb items
 const commonDashboardBreadcrumbItems = [
   { label: "Dashboard", path: "/dashboard", behindIcon: <MdDashboard /> },
 ];
-
-
 
 // Export the structured breadcrumb items, reusing common items
 export const breadcrumbItems = {
@@ -47,6 +45,14 @@ export const breadcrumbItems = {
         behindIcon: <MdOfflinePin />,
       },
     ],
+    department: [
+      ...commonDashboardBreadcrumbItems, // Reuse common breadcrumb items
+      {
+        label: "Manage Departments",
+        path: "/dashboard/manage-departments",
+        behindIcon: <FaHospitalUser />,
+      },
+    ],
     team: [
       ...commonDashboardBreadcrumbItems, // Reuse common breadcrumb items
       {
@@ -67,18 +73,18 @@ export const breadcrumbItems = {
       ...commonDashboardBreadcrumbItems,
       {
         label: "Manage Blogs",
-        path: "/dashboard/blogs",
+        path: "/dashboard/manage-blogs",
         behindIcon: <MdEditNote />,
       },
     ],
     image: [
-          ...commonDashboardBreadcrumbItems,
-          {
-            label: "Manage Images",
-            path: "/dashboard/manage-images",
-            behindIcon: <BiCloudUpload />,
-          },
-        ],
+      ...commonDashboardBreadcrumbItems,
+      {
+        label: "Manage Images",
+        path: "/dashboard/manage-images",
+        behindIcon: <BiCloudUpload />,
+      },
+    ],
     faq: [
       ...commonDashboardBreadcrumbItems,
       {
